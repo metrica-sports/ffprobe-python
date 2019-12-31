@@ -67,12 +67,17 @@ class FFProbe:
                 elif 'Stream #' in line:
                     is_metadata = False
                     stream_metadata_met = True
+                elif 'Chapter #' in line:
+                    is_metadata = False
+                    stream_metadata_met = False
                 elif is_metadata:
                     splits = line.split(',')
                     for s in splits:
                         m = re.search(r'(\w+)\s*:\s*(.*)$', s)
-                        # print(m.groups())
-                        self.metadata[m.groups()[0]] = m.groups()[1].strip()
+                        try:
+                            self.metadata[m.groups()[0]] = m.groups()[1].strip()
+                        except:
+                            pass
 
                 if '[STREAM]' in line:
                     stream = True
