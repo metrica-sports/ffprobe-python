@@ -67,6 +67,9 @@ class FFProbe:
                 elif 'Stream #' in line:
                     is_metadata = False
                     stream_metadata_met = True
+                elif 'Chapter #' in line:
+                    is_metadata = False
+                    stream_metadata_met = False
                 elif is_metadata:
                     splits = line.split(',')
                     for s in splits:
