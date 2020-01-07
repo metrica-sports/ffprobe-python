@@ -36,6 +36,7 @@ class FFProbe:
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
             stream = False
+            side_data = False
             self.streams = []
             self.video = []
             self.audio = []
@@ -52,7 +53,11 @@ class FFProbe:
                     stream = False
                     # noinspection PyUnboundLocalVariable
                     self.streams.append(FFStream(data_lines))
-                elif stream:
+                elif '[SIDE_DATA]' in line:
+                    side_data = True
+                elif '[/SIDE_DATA]' in line:
+                    side_data = False
+                elif stream and not side_data:
                     data_lines.append(line)
 
             self.metadata = {}
