@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='ffprobe-python',
-    version='1.0.3+metrica-sports.1',
+    version='1.0.3+metricasports.1',
     description="""
     A wrapper around ffprobe command to extract metadata from media files.
     """,
