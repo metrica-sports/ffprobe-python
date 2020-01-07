@@ -11,6 +11,8 @@ import subprocess
 
 from ffprobe.exceptions import FFProbeError
 
+def default_decode(str):
+    return str.decode('utf-8')
 
 class FFProbe:
     """
@@ -18,7 +20,7 @@ class FFProbe:
         metadata=FFProbe('multimedia-file.mov')
     """
 
-    def __init__(self, path_to_video):
+    def __init__(self, path_to_video, decode=default_decode):
         self.path_to_video = path_to_video
 
         try:
@@ -36,6 +38,7 @@ class FFProbe:
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
             stream = False
+            side_data = False
             self.streams = []
             self.video = []
             self.audio = []
@@ -43,7 +46,7 @@ class FFProbe:
             self.attachment = []
 
             for line in iter(p.stdout.readline, b''):
-                line = line.decode('UTF-8')
+                line = decode(line)
 
                 if '[STREAM]' in line:
                     stream = True
@@ -52,7 +55,11 @@ class FFProbe:
                     stream = False
                     # noinspection PyUnboundLocalVariable
                     self.streams.append(FFStream(data_lines))
-                elif stream:
+                elif '[SIDE_DATA]' in line:
+                    side_data = True
+                elif '[/SIDE_DATA]' in line:
+                    side_data = False
+                elif stream and not side_data:
                     data_lines.append(line)
 
             self.metadata = {}
@@ -60,7 +67,7 @@ class FFProbe:
             stream_metadata_met = False
 
             for line in iter(p.stderr.readline, b''):
-                line = line.decode('UTF-8')
+                line = decode(line)
 
                 if 'Metadata:' in line and not stream_metadata_met:
                     is_metadata = True
