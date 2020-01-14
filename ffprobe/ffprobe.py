@@ -31,9 +31,9 @@ class FFProbe:
 
         if os.path.isfile(self.path_to_video):
             if platform.system() == 'Windows':
-                cmd = ["ffprobe", "-show_streams", self.path_to_video]
+                cmd = ["ffprobe", "-show_streams", "-v", "quiet", self.path_to_video]
             else:
-                cmd = ["ffprobe -show_streams " + pipes.quote(self.path_to_video)]
+                cmd = ["ffprobe -show_streams -v quiet " + pipes.quote(self.path_to_video)]
 
             p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
